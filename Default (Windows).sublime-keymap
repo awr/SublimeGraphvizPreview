@@ -1,6 +1,6 @@
 [
 	{
-		"keys": ["super+shift+g"],
+		"keys": ["ctrl+shift+g"],
 		"command": "graphviz_preview"
 	}
 ]
