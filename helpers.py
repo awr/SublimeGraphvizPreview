@@ -39,35 +39,27 @@ def surroundingGraphviz(data, cursor):
     code = code_before + code_after
     return code
 
-
-def graphvizPDF(code):
+def createTempFile(code):
     '''
-    Convert graphviz code to a PDF.
+    Write graphviz code to a file.
     '''
     # temporary graphviz file
     grapviz = tempfile.NamedTemporaryFile(prefix='sublime_text_graphviz_', dir=None, suffix='.viz', delete=False, mode='wb')
     grapviz.write(code.encode('utf-8'))
     grapviz.close()
 
+    return grapviz.name
+
+def graphvizDot(filename, type):
+    '''
+    Convert graphviz file to a PNG.
+    '''
     # compile pdf
-    pdf_filename = tempfile.mktemp(prefix='sublime_text_graphviz_', dir=None, suffix='.pdf')
-    call(['dot', '-Tpdf', '-o' + pdf_filename, grapviz.name], env=ENVIRON)
-    os.unlink(grapviz.name)
+    path = os.path.dirname(filename)
+    os.chdir(path)
+    f, extension = os.path.splitext(filename)
+    out_filename = f + '.' + type
 
-    return pdf_filename
+    call(['dot', '-T' + type, '-o' + out_filename, filename], env=ENVIRON)
 
-def graphvizPNG(code):
-    '''
-    Convert graphviz code to a PNG.
-    '''
-    # temporary graphviz file
-    grapviz = tempfile.NamedTemporaryFile(prefix='sublime_text_graphviz_', dir=None, suffix='.viz', delete=False, mode='wb')
-    grapviz.write(code.encode('utf-8'))
-    grapviz.close()
-
-    # compile png (so custom nodes as images work)
-    png_filename = tempfile.mktemp(prefix='sublime_text_graphviz_', dir=None, suffix='.png')
-    call(['dot', '-Tpng', '-o' + png_filename, grapviz.name], env=ENVIRON)
-    os.unlink(grapviz.name)
-
-    return png_filename
+    return out_filename
