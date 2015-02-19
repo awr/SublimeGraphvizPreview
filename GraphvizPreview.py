@@ -4,9 +4,9 @@ import os
 import platform
 
 try:  # python 3
-    from .helpers import surroundingGraphviz, graphvizPDF, ENVIRON
+    from .helpers import surroundingGraphviz, graphvizPDF, graphvizPNG, ENVIRON
 except ValueError:  # python 2
-    from helpers import surroundingGraphviz, graphvizPDF, ENVIRON
+    from helpers import surroundingGraphviz, graphvizPDF, graphvizPNG, ENVIRON
 
 
 class GraphvizPreviewCommand(sublime_plugin.TextCommand):
@@ -25,15 +25,15 @@ class GraphvizPreviewCommand(sublime_plugin.TextCommand):
             sublime.error_message('Graphviz: Please place cursor in graphviz code before running')
             return
 
-
-        pdf_filename = graphvizPDF(code)
+        final_filename = graphvizPNG(code)
 
         try:
             if platform.system() == 'Windows':
-                os.startfile(pdf_filename)
+                os.startfile(final_filename)
             else:
-                call(['open', pdf_filename], env=ENVIRON)            
+                call(['open', final_filename], env=ENVIRON)            
         except Exception as e:
-            sublime.error_message('Graphviz: Could not open PDF, ' + str(e))
+            sublime.error_message('Graphviz: Could not open file, ' + str(e))
             raise e
+
 
