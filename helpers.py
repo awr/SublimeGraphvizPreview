@@ -55,3 +55,19 @@ def graphvizPDF(code):
     os.unlink(grapviz.name)
 
     return pdf_filename
+
+def graphvizPNG(code):
+    '''
+    Convert graphviz code to a PNG.
+    '''
+    # temporary graphviz file
+    grapviz = tempfile.NamedTemporaryFile(prefix='sublime_text_graphviz_', dir=None, suffix='.viz', delete=False, mode='wb')
+    grapviz.write(code.encode('utf-8'))
+    grapviz.close()
+
+    # compile png (so custom nodes as images work)
+    png_filename = tempfile.mktemp(prefix='sublime_text_graphviz_', dir=None, suffix='.png')
+    call(['dot', '-Tpng', '-o' + png_filename, grapviz.name], env=ENVIRON)
+    os.unlink(grapviz.name)
+
+    return png_filename
